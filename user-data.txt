@@ -1,0 +1,42 @@
+# User data for installation elk stack on centos 8
+sudo yum install java-1.8.0-openjdk -y
+yum install nc -y
+yum install net-tools -y
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+tee -a /etc/yum.repos.d/elasticsearch.repo << EOF
+[elasticsearch]
+name=Elasticsearch repository for 8.x packages
+baseurl=https://artifacts.elastic.co/packages/8.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=0
+autorefresh=1
+type=rpm-md
+EOF
+#### network.host in /etc/elasticsearch/elasticsearch.yml
+#### xpack.security.enabled: false in /etc/elasticsearch/elasticsearch.yml
+sudo yum install --enablerepo=elasticsearch elasticsearch  -y
+systemctl enable elasticsearch
+reboot
+
+
+
+
+#### Kibana installation
+tee -a /etc/yum.repos.d/kibana.repo << EOF
+[kibana-8.x]
+name=Kibana repository for 8.x packages
+baseurl=https://artifacts.elastic.co/packages/8.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
+
+sudo yum install kibana -y
+
+#### kibana settings
+#server.port: 5601
+#server.host: "localhost"
+#elasticsearch.hosts: ["http://localhost:9200"]
